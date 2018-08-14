@@ -1,4 +1,4 @@
-FROM kdockerfiles/pulseaudio-shared:10.0-1
+FROM kdockerfiles/pulseaudio-shared:12.2-1
 LABEL maintainer="KenjiTakahashi <kenji.sx>"
 
 RUN apk add --no-cache \
@@ -13,9 +13,12 @@ RUN apk add --no-cache \
 
 COPY *.patch /home/
 
-RUN curl -Lo/home/mpd.tar.xz http://www.musicpd.org/download/mpd/0.20/mpd-0.20.9.tar.xz && \
+ARG MPD_VERSION_BASE=0.20
+ARG MPD_VERSION_FULL=0.20.20
+
+RUN curl -Lo/home/mpd.tar.xz http://www.musicpd.org/download/mpd/${MPD_VERSION_BASE}/mpd-${MPD_VERSION_FULL}.tar.xz && \
     tar xf /home/mpd.tar.xz -C /home && \
-    cd /home/mpd-0.20.9 && \
+    cd /home/mpd-${MPD_VERSION_FULL} && \
     patch -Np1 < ../stacksize.patch && \
     ./configure \
         --prefix=/usr/local \
@@ -47,10 +50,10 @@ RUN curl -Lo/home/mpd.tar.xz http://www.musicpd.org/download/mpd/0.20/mpd-0.20.9
     && \
     make && \
     make install && \
-    rm -rf /home/mpd-0.20.9 /home/*.xz
+    rm -rf /home/mpd-${MPD_VERSION_FULL} /home/*.patch /home/*.xz
 
 
-FROM alpine:3.6
+FROM alpine:3.8
 
 RUN apk add --no-cache \
     libcdio-paranoia \
