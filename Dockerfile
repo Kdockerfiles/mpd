@@ -1,11 +1,12 @@
-FROM kdockerfiles/pulseaudio-shared:12.2-1
+FROM kdockerfiles/pulseaudio-shared:12.2-2
 LABEL maintainer="KenjiTakahashi <kenji.sx>"
 
 RUN apk add --no-cache \
     curl \
+    meson \
     g++ \
-    make \
     boost-dev \
+    py-sphinx \
     libcdio-paranoia-dev \
     libid3tag-dev \
     libmad-dev \
@@ -13,47 +14,43 @@ RUN apk add --no-cache \
 
 COPY *.patch /home/
 
-ARG MPD_VERSION_BASE=0.20
-ARG MPD_VERSION_FULL=0.20.20
+ARG MPD_VERSION_BASE=0.21
+ARG MPD_VERSION_FULL=0.21.11
 
 RUN curl -Lo/home/mpd.tar.xz http://www.musicpd.org/download/mpd/${MPD_VERSION_BASE}/mpd-${MPD_VERSION_FULL}.tar.xz && \
     tar xf /home/mpd.tar.xz -C /home && \
     cd /home/mpd-${MPD_VERSION_FULL} && \
     patch -Np1 < ../stacksize.patch && \
-    ./configure \
-        --prefix=/usr/local \
-        --sysconfdir=/usr/local/etc \
-        --mandir=/usr/local/share/man \
-        --infodir=/usr/local/share/info \
-        --enable-database \
-        --enable-httpd-output \
-        --enable-cdio-paranoia \
-        --enable-pulse \
-        --enable-id3 \
-        --enable-flac \
-        --enable-mad \
-        --disable-daemon \
-        --disable-libmpdclient \
-        --disable-oss \
-        --disable-openal \
-        --disable-ao \
-        --disable-jack \
-        --disable-modplug \
-        --disable-shout \
-        --disable-sidplay \
-        --disable-soundcloud \
-        --disable-wavpack \
-        --disable-smbclient \
-        --disable-fluidsynth \
-        --with-zeroconf=no \
-        --enable-debug \
-    && \
-    make && \
-    make install && \
-    rm -rf /home/mpd-${MPD_VERSION_FULL} /home/*.patch /home/*.xz
+    meson \
+        -Ddocumentation=true \
+        -Dchromaprint=disabled \
+        -Dsidplay=disabled \
+        -Dadplug=disabled \
+        -Dsndio=disabled \
+        -Dshine=disabled \
+        -Dtremor=disabled \
+        -Dao=disabled \
+        -Dffmpeg=disabled \
+        -Djack=disabled \
+        -Dmodplug=disabled \
+        -Dshout=disabled \
+        -Dsidplay=disabled \
+        -Dsoundcloud=disabled \
+        -Dwavpack=disabled \
+        -Dzzip=disabled \
+        -Dzeroconf=disabled \
+        -Dsmbclient=disabled \
+        -Dlibmpdclient=disabled \
+        -Dopenal=disabled \
+        -Dfluidsynth=disabled \
+        -Dmms=disabled \
+        -Dgme=disabled \
+    . output && \
+    ninja -C output && \
+    ninja -C output install
 
 
-FROM alpine:3.8
+FROM alpine:3.10
 
 RUN apk add --no-cache \
     libcdio-paranoia \
