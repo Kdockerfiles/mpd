@@ -1,4 +1,4 @@
-FROM kdockerfiles/pulseaudio-shared:12.2-3
+FROM kdockerfiles/pulseaudio-shared:13.0-1
 LABEL maintainer="KenjiTakahashi <kenji.sx>"
 
 RUN apk add --no-cache \
@@ -15,7 +15,7 @@ RUN apk add --no-cache \
 COPY *.patch /home/
 
 ARG MPD_VERSION_BASE=0.21
-ARG MPD_VERSION_FULL=0.21.13
+ARG MPD_VERSION_FULL=0.21.23
 
 RUN curl -Lo/home/mpd.tar.xz http://www.musicpd.org/download/mpd/${MPD_VERSION_BASE}/mpd-${MPD_VERSION_FULL}.tar.xz && \
     tar xf /home/mpd.tar.xz -C /home && \
