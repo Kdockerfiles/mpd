@@ -50,7 +50,7 @@ RUN curl -Lo/home/mpd.tar.xz http://www.musicpd.org/download/mpd/${MPD_VERSION_B
     ninja -C output install
 
 
-FROM alpine:3.10
+FROM alpine:3.11
 
 RUN apk add --no-cache \
     libcdio-paranoia \
