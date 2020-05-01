@@ -6,7 +6,7 @@ RUN apk add --no-cache \
     meson \
     g++ \
     boost-dev \
-    py-sphinx \
+    libintl \
     libcdio-paranoia-dev \
     libid3tag-dev \
     libmad-dev \
@@ -22,7 +22,7 @@ RUN curl -Lo/home/mpd.tar.xz http://www.musicpd.org/download/mpd/${MPD_VERSION_B
     cd /home/mpd-${MPD_VERSION_FULL} && \
     patch -Np1 < ../stacksize.patch && \
     meson \
-        -Ddocumentation=true \
+        -Ddocumentation=false \
         -Dchromaprint=disabled \
         -Dsidplay=disabled \
         -Dadplug=disabled \
