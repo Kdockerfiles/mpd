@@ -11,6 +11,7 @@
 ## Available volumes
 
 `/home/music`: Directory with music.
+
 `/home/playlists`: Directory with playlists.
 
 ## Directory with sndio socket
